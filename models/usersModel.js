@@ -9,11 +9,12 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
+      unique: true, //this means that the value must be unique or not duplicated within the entire collection
     },
     subscription: {
       type: String,
       enum: ["starter", "pro", "business"],
+      //enum is a data type which you can think of as a collection of relevant data
       default: "starter",
     },
     token: {

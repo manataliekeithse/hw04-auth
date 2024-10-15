@@ -8,11 +8,15 @@ import {
 } from "../validation/validation.js";
 
 const { SECRET_KEY } = process.env;
+//1. Validate request body using Joi
+//2. Validate if email is unique
+//3. Hashed the password before saving it to the database
+//4. Save the user to the database
 
 const signupUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    // Registration validation error
     const { error } = signupValidation.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.message });
@@ -20,6 +24,7 @@ const signupUser = async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      //Registration Conflict Error
       return res.status(409).json({ message: "Email in Use" });
     }
 
@@ -38,25 +43,35 @@ const signupUser = async (req, res) => {
   }
 };
 
+//1. Validate request body is using Joi.
+//2. Validate if email is existing.
+//3. If email exists, we will compare or decrypt the hashed password to the password.
+//4. If decryption is successful, we will generate a token to the user and save the token to the user in the database using findByIdAndUpdate.
+//5. If decryption is not successful, send an error saying password is wrong.
+// The user will apply the token as an authentication for all future requests.
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const { error } = signupValidation.validate(req.body);
+    //Log in validation error
     if (error) {
       return res.status(401).json({ message: error.message });
     }
 
     const user = await User.findOne({ email });
+    //Login user inexistent error
     if (!user) {
       return res.status(401).json({ message: "Email or password is wrong" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    //Login user password error
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Email or password is wrong" });
     }
-
+    // id is coming from MongoDB
+    // id will be for the JWT
     const payload = { id: user._id };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
