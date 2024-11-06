@@ -15,6 +15,8 @@ const userSchema = new Schema(
       type: String,
       enum: ["starter", "pro", "business"],
       //enum is a data type which you can think of as a collection of relevant data
+      //setting an enum means all the values set on this field must only comes from enum
+
       default: "starter",
     },
     token: {
