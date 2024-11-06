@@ -90,6 +90,8 @@ const loginUser = async (req, res) => {
   }
 };
 
+// literally only validates the jwt then once validated,
+// then, retrieves the data of the logs out the user (this automatically strips the user of authentication rights)
 const logoutUser = async (req, res) => {
   try {
     const { _id } = req.user;
@@ -99,6 +101,8 @@ const logoutUser = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// literally only validates the jwt then once validated,
+// then, retrieves the data of the login user.
 
 const getCurrentUsers = async (req, res) => {
   try {
